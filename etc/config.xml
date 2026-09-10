@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <midcore_llmstxt>
+            <general>
+                <enabled>0</enabled>
+                <include_llms_full>1</include_llms_full>
+                <append_robots>0</append_robots>
+                <cache_ttl>3600</cache_ttl>
+            </general>
+            <content>
+                <include_identity>1</include_identity>
+                <site_name/>
+                <summary/>
+                <details/>
+                <include_categories>1</include_categories>
+                <include_products>1</include_products>
+                <exclude_oos>1</exclude_oos>
+                <max_categories_index>100</max_categories_index>
+                <max_products_index>40</max_products_index>
+                <include_cms>1</include_cms>
+                <cms_page_ids/>
+                <manual_markdown/>
+                <include_sibling_stores>1</include_sibling_stores>
+            </content>
+            <generation>
+                <cron_enabled>1</cron_enabled>
+                <cron_expr>0 2 * * *</cron_expr>
+                <only_when_dirty>0</only_when_dirty>
+                <batch_size>500</batch_size>
+            </generation>
+        </midcore_llmstxt>
+    </default>
+</config>

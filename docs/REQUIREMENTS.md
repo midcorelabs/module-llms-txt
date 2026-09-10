@@ -1,6 +1,6 @@
 # Magento 2 module: llms.txt (planning / requirements)
 
-Status: Requirements locked pending go/no-go on build.
+Status: v1 implemented in this repository (go decision taken).
 Note: §6.4 serving locked (Rohan). §8 product decisions locked (Jigar Sir).
 Owner: Karan · Team Manager (MidCore Magento Team)
 Last updated: 2026-09-10
@@ -186,9 +186,5 @@ Requirements are locked enough to build a free MIT `MidCore_LlmsTxt` v1: Cloud-n
 
 ## 11. Next step after approval
 
-1. Lock answers to §8
-2. Rohan writes ADR (architecture decision record)
-3. Vikram scaffolds module in a private repo
-4. Priya adds Cloud runbook
-5. Ananya drafts merchant-facing “what to put in llms.txt” guide
+v1 is implemented in-repo: ADR (`docs/ADR-001-cloud-native-serve.md`), Cloud runbook (`docs/CLOUD.md`), merchant install/CLI notes (`README.md`).
 
