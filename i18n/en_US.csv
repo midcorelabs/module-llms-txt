@@ -1,0 +1,5 @@
+"Enable","Enable"
+"Generate llms.txt and llms-full.txt into var/llms/{website}/{store}/","Generate llms.txt and llms-full.txt into var/llms/{website}/{store}/"
+"llms.txt is disabled for store ""%1"". Enable it under Stores > Configuration > MidCore > llms.txt.","llms.txt is disabled for store ""%1"". Enable it under Stores > Configuration > MidCore > llms.txt."
+"Unknown store view code: %1","Unknown store view code: %1"
+"No enabled store views found for llms.txt generation.","No enabled store views found for llms.txt generation."

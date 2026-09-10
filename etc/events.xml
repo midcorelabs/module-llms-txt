@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="catalog_product_save_after">
+        <observer name="midcore_llmstxt_dirty" instance="MidCore\LlmsTxt\Observer\MarkDirtyObserver"/>
+    </event>
+    <event name="catalog_product_delete_after">
+        <observer name="midcore_llmstxt_dirty_product_delete" instance="MidCore\LlmsTxt\Observer\MarkDirtyObserver"/>
+    </event>
+    <event name="catalog_category_save_after">
+        <observer name="midcore_llmstxt_dirty_category" instance="MidCore\LlmsTxt\Observer\MarkDirtyObserver"/>
+    </event>
+    <event name="catalog_category_delete_after">
+        <observer name="midcore_llmstxt_dirty_category_delete" instance="MidCore\LlmsTxt\Observer\MarkDirtyObserver"/>
+    </event>
+    <event name="cms_page_save_after">
+        <observer name="midcore_llmstxt_dirty_cms" instance="MidCore\LlmsTxt\Observer\MarkDirtyObserver"/>
+    </event>
+    <event name="cms_page_delete_after">
+        <observer name="midcore_llmstxt_dirty_cms_delete" instance="MidCore\LlmsTxt\Observer\MarkDirtyObserver"/>
+    </event>
+    <event name="store_save_after">
+        <observer name="midcore_llmstxt_dirty_store" instance="MidCore\LlmsTxt\Observer\MarkDirtyObserver"/>
+    </event>
+    <event name="admin_system_config_changed_section_midcore_llmstxt">
+        <observer name="midcore_llmstxt_dirty_config" instance="MidCore\LlmsTxt\Observer\MarkDirtyObserver"/>
+    </event>
+</config>

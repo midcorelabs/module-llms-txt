@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="midcore" translate="label" sortOrder="400">
+            <label>MidCore</label>
+        </tab>
+        <section id="midcore_llmstxt" translate="label" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>llms.txt</label>
+            <tab>midcore</tab>
+            <resource>MidCore_LlmsTxt::config</resource>
+            <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <comment>Artifacts are generated offline into var/llms/{website_code}/{store_code}/ and served at /llms.txt and /llms-full.txt. Generation never runs on a storefront request.</comment>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>When disabled, /llms.txt returns 404 for this store view.</comment>
+                </field>
+                <field id="include_llms_full" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Generate llms-full.txt</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Fuller catalog listing (names, SKUs, URLs, short descriptions) for agents that want more than the curated index.</comment>
+                </field>
+                <field id="append_robots" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Mention in robots.txt</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Appends a comment with the llms.txt URL. Off by default so other robots.txt modules are not surprised.</comment>
+                </field>
+                <field id="cache_ttl" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>CDN / browser cache TTL (seconds)</label>
+                    <validate>validate-digits validate-zero-or-greater</validate>
+                    <comment>Sent as Cache-Control max-age / s-maxage. Fastly should cache these URLs at the edge.</comment>
+                </field>
+                <field id="status" translate="label comment" type="label" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Last generation</label>
+                    <frontend_model>MidCore\LlmsTxt\Block\Adminhtml\System\Config\Status</frontend_model>
+                    <comment>Run bin/magento midcore:llms:generate or wait for cron. Do not generate from HTTP on large catalogs.</comment>
+                </field>
+            </group>
+            <group id="content" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Content</label>
+                <comment>Checkout, cart, customer, wishlist, API, and admin paths are never included.</comment>
+                <field id="include_identity" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Include store identity / blurb</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Adds the summary blockquote and detail paragraphs. The H1 site name is always written (required by llmstxt.org).</comment>
+                </field>
+                <field id="site_name" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Site name override</label>
+                    <depends>
+                        <field id="include_identity">1</field>
+                    </depends>
+                    <comment>Leave empty to use store information name, then the store view name.</comment>
+                </field>
+                <field id="summary" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Summary (blockquote)</label>
+                    <depends>
+                        <field id="include_identity">1</field>
+                    </depends>
+                    <comment>Short key facts. Rendered as a markdown blockquote. Leave empty for an auto-generated one-liner.</comment>
+                </field>
+                <field id="details" translate="label comment" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Details</label>
+                    <depends>
+                        <field id="include_identity">1</field>
+                    </depends>
+                    <comment>Optional paragraphs after the summary. Do not use markdown headings here (they are stripped to keep the spec valid).</comment>
+                </field>
+                <field id="include_categories" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Include categories</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="max_categories_index" translate="label comment" type="text" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Max categories in llms.txt</label>
+                    <depends>
+                        <field id="include_categories">1</field>
+                    </depends>
+                    <validate>validate-digits validate-zero-or-greater</validate>
+                    <comment>0 means no extra cap (a safety cap still applies to keep the index small). llms-full.txt lists all.</comment>
+                </field>
+                <field id="include_products" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Include products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="exclude_oos" translate="label comment" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Exclude out-of-stock products</label>
+                    <depends>
+                        <field id="include_products">1</field>
+                    </depends>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="max_products_index" translate="label comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Max products in llms.txt</label>
+                    <depends>
+                        <field id="include_products">1</field>
+                    </depends>
+                    <validate>validate-digits validate-zero-or-greater</validate>
+                    <comment>Keep the index curated. Full listing belongs in llms-full.txt. 0 means no extra cap (safety cap still applies).</comment>
+                </field>
+                <field id="include_cms" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Include CMS pages</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cms_page_ids" translate="label comment" type="multiselect" sortOrder="85" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>CMS pages</label>
+                    <depends>
+                        <field id="include_cms">1</field>
+                    </depends>
+                    <source_model>MidCore\LlmsTxt\Model\Config\Source\CmsPages</source_model>
+                    <can_be_empty>1</can_be_empty>
+                    <comment>Leave empty to include all enabled CMS pages assigned to this store.</comment>
+                </field>
+                <field id="manual_markdown" translate="label comment" type="textarea" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Manual markdown</label>
+                    <comment>Extra H2 sections (policy notes, shipping, brand voice). Use H2 headings and "- [name](url): notes" lists for spec compliance. H1 lines are rewritten to H2.</comment>
+                </field>
+                <field id="include_sibling_stores" translate="label comment" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Cross-link sibling store views</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Adds other store views from the same website under the Optional section.</comment>
+                </field>
+            </group>
+            <group id="generation" translate="label" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Generation (CLI / cron)</label>
+                <field id="cron_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable cron</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cron_expr" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Cron schedule</label>
+                    <comment>Standard cron expression. Default is daily at 02:00. Job group: midcore (separate process).</comment>
+                </field>
+                <field id="only_when_dirty" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Cron only when catalog/CMS is dirty</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Observers set a dirty flag on product, category, CMS, store, and this config save. CLI always generates.</comment>
+                </field>
+                <field id="batch_size" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Collection batch size</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <comment>Cursor pagination (entity_id &gt; last), not OFFSET. Tune for large catalogs.</comment>
+                </field>
+            </group>
+            <group id="analytics" translate="label comment" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Analytics</label>
+                <comment><![CDATA[
+v1 does not write to the database on the serve path.<br/>
+<strong>Preferred:</strong> Fastly / edge logs for real crawler hits on /llms.txt and /llms-full.txt.<br/>
+The origin miss counter (shown under Last generation) is <em>partial</em>: long CDN TTLs mean most hits never reach Magento.
+                ]]></comment>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,49 @@
+{
+    "name": "midcore/module-llms-txt",
+    "description": "Generate and serve llmstxt.org files (llms.txt and llms-full.txt) from Magento catalog and CMS data. Cloud-native: artifacts in var/, served via Magento routes.",
+    "type": "magento2-module",
+    "license": "MIT",
+    "keywords": [
+        "magento2",
+        "adobe-commerce",
+        "llms.txt",
+        "llmstxt",
+        "ai",
+        "seo"
+    ],
+    "authors": [
+        {
+            "name": "MidCore Labs",
+            "homepage": "https://github.com/midcorelabs"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "magento/framework": ">=103.0.4",
+        "magento/module-backend": "*",
+        "magento/module-catalog": "*",
+        "magento/module-catalog-inventory": "*",
+        "magento/module-cms": "*",
+        "magento/module-config": "*",
+        "magento/module-cron": "*",
+        "magento/module-page-cache": "*",
+        "magento/module-robots": "*",
+        "magento/module-store": "*"
+    },
+    "suggest": {
+        "magento/module-shared-catalog": "Adobe Commerce B2B shared catalogs are feature-detected; guest-visible products are listed when present."
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MidCore\\LlmsTxt\\": ""
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MidCore\\LlmsTxt\\Test\\": "Test/"
+        }
+    }
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="midcoreLlmsGenerate" xsi:type="object">MidCore\LlmsTxt\Console\Command\GenerateCommand</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="MidCoreLlmsTxtLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="name" xsi:type="string">midcore_llmstxt</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">MidCore\LlmsTxt\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="MidCore\LlmsTxt\Model\Generator">
+        <arguments>
+            <argument name="logger" xsi:type="object">MidCoreLlmsTxtLogger</argument>
+        </arguments>
+    </type>
+    <type name="MidCore\LlmsTxt\Cron\Generate">
+        <arguments>
+            <argument name="logger" xsi:type="object">MidCoreLlmsTxtLogger</argument>
+        </arguments>
+    </type>
+    <type name="MidCore\LlmsTxt\Console\Command\GenerateCommand">
+        <arguments>
+            <argument name="logger" xsi:type="object">MidCoreLlmsTxtLogger</argument>
+        </arguments>
+    </type>
+    <type name="MidCore\LlmsTxt\Model\Serve\FileServer">
+        <arguments>
+            <argument name="logger" xsi:type="object">MidCoreLlmsTxtLogger</argument>
+        </arguments>
+    </type>
+</config>
