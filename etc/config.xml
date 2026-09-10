@@ -27,7 +27,7 @@
             <generation>
                 <cron_enabled>1</cron_enabled>
                 <cron_expr>0 2 * * *</cron_expr>
-                <only_when_dirty>0</only_when_dirty>
+                <only_when_dirty>1</only_when_dirty>
                 <batch_size>500</batch_size>
             </generation>
         </midcore_llmstxt>

@@ -135,7 +135,7 @@
                 <field id="only_when_dirty" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Cron only when catalog/CMS is dirty</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Observers set a dirty flag on product, category, CMS, store, and this config save. CLI always generates.</comment>
+                    <comment>On by default. Observers set a dirty flag on product, category, CMS, store, and this config save. CLI always generates.</comment>
                 </field>
                 <field id="batch_size" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Collection batch size</label>
@@ -148,7 +148,7 @@
                 <comment><![CDATA[
 v1 does not write to the database on the serve path.<br/>
 <strong>Preferred:</strong> Fastly / edge logs for real crawler hits on /llms.txt and /llms-full.txt.<br/>
-The origin miss counter (shown under Last generation) is <em>partial</em>: long CDN TTLs mean most hits never reach Magento.
+The origin miss counter (shown under Last generation) is <em>partial</em>: long CDN TTLs mean most hits never reach Magento. It uses cache tag midcore_llmstxt_analytics, so regenerate does not reset it.
                 ]]></comment>
             </group>
         </section>
