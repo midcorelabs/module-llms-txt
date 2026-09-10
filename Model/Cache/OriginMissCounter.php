@@ -18,6 +18,12 @@ class OriginMissCounter
     private const KEY_PREFIX = 'midcore_llmstxt_origin_miss_';
     private const TTL = 2592000;
 
+    /**
+     * Separate from Invalidator::TAG_PREFIX so regenerate / Fastly purge
+     * of /llms.txt does not reset the partial miss counter.
+     */
+    public const CACHE_TAG = 'midcore_llmstxt_analytics';
+
     public function __construct(
         private CacheInterface $cache
     ) {
@@ -27,7 +33,7 @@ class OriginMissCounter
     {
         $key = self::KEY_PREFIX . $storeId;
         $n = (int)$this->cache->load($key);
-        $this->cache->save((string)($n + 1), $key, [Invalidator::TAG_PREFIX], self::TTL);
+        $this->cache->save((string)($n + 1), $key, [self::CACHE_TAG], self::TTL);
     }
 
     public function get(int $storeId): int

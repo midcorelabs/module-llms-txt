@@ -14,21 +14,22 @@ Cloud is the reason this module writes **only** to `var/llms/` and serves `/llms
 
 ## Generate offline
 
+**Recommended:** Magento cron group `midcore` (separate process so a large catalog does not block `default` cron). Magento’s usual `cron:run` already schedules this group. Set the expression under Stores → Configuration → MidCore → llms.txt → Cron schedule. Cron **only when dirty** is on by default.
+
 ```bash
 php bin/magento midcore:llms:generate
 php bin/magento midcore:llms:generate --store=default
 php bin/magento cron:run --group=midcore
 ```
 
-Do **not** generate during a storefront request. Large catalogs belong on CLI, Magento cron (`midcore` group, separate process), or a Cloud cron/worker.
+Do **not** generate during a storefront request.
 
-Suggested Cloud crontab (in addition to Magento’s default `cron:run`):
+**Optional override:** if Magento cron cannot run this job (for example a dedicated worker that must call the CLI), add **one** Cloud crontab entry and **disable** the module’s Magento cron (Stores → Configuration → MidCore → llms.txt → Enable cron = No). Do not run Magento group `midcore` and a Cloud crontab that calls `midcore:llms:generate` at the same time — that double-generates.
 
 ```text
+# Optional Cloud crontab — only when Magento cron for this module is disabled
 0 2 * * * php bin/magento midcore:llms:generate
 ```
-
-Or rely on Magento cron with Stores → Configuration → MidCore → llms.txt → Cron schedule.
 
 Post-deploy: run generate once so the first crawler does not see a 404.
 
@@ -49,4 +50,4 @@ Confirm `routes.yaml` sends `/llms.txt` to the Magento upstream (default Magento
 
 Real crawler volume lives in **Fastly / edge logs**, not Magento. Filter URL path `/llms.txt` or `/llms-full.txt` and bot user-agents (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, and similar).
 
-The admin “origin misses (partial)” counter increments only when Magento serves a 404 because the file is missing. Long edge TTLs mean successful crawler hits often never reach origin. There is **no database write on the serve path**.
+The admin “origin misses (partial)” counter increments only when Magento serves a 404 because the file is missing. It is stored under cache tag `midcore_llmstxt_analytics`, not `midcore_llmstxt`, so regenerate (which cleans `midcore_llmstxt`) does not reset it. Long edge TTLs mean successful crawler hits often never reach origin. There is **no database write on the serve path**.

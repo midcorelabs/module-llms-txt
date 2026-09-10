@@ -3,7 +3,7 @@
 Magento 2 / Adobe Commerce module that generates and serves [`llms.txt`](https://llmstxt.org/) and `llms-full.txt` so AI agents can read a store catalog as markdown instead of theme HTML.
 
 - Vendor / module: `MidCore_LlmsTxt`
-- Composer: `midcore/module-llms-txt`
+- Composer: `midcore/module-llms-txt` (GitHub org is `midcorelabs`; the Composer vendor prefix is intentional)
 - License: MIT
 - Magento: Open Source and Adobe Commerce 2.4.x (PHP 8.1+)
 - Storefront: Hyvä / Luma / Blank **neutral** (no theme, layout, or JS)
@@ -49,8 +49,8 @@ Stores → Configuration → MidCore → llms.txt (store-view scoped unless note
 - Store identity (name, blockquote summary, detail paragraphs)
 - Categories, products (optional exclude out-of-stock), CMS pages, manual markdown
 - Cross-link sibling store views on the same website (Optional section)
-- Default-scope cron: enable, schedule, “only when dirty”, batch size
-- Last generation status + **partial** origin-miss counter
+- Default-scope cron: enable, schedule, “only when dirty” (default **Yes**), batch size
+- Last generation status + **partial** origin-miss counter (survives regenerate)
 
 ## CLI and cron
 
@@ -59,8 +59,8 @@ bin/magento midcore:llms:generate [--store=code]
 bin/magento cron:run --group=midcore
 ```
 
-- Cron group `midcore` runs in a **separate process** so a large catalog does not block `default` Magento cron.
-- Observers set a dirty flag on product, category, CMS, store, and this config save (best effort). CLI always generates; cron can be set to “only when dirty”.
+- Cron group `midcore` is the **recommended** scheduler (separate process so a large catalog does not block `default` Magento cron). A Cloud crontab that calls `midcore:llms:generate` is an optional override only — do not run both.
+- Observers set a dirty flag on product, category, CMS, store, and this config save (best effort). CLI always generates; cron **only when dirty** is the default.
 - Writes are atomic (temp file + rename). Product/category/CMS queries use `entity_id > lastId` batches (no OFFSET walk).
 
 Logs: `var/log/midcore_llms.log`.
@@ -72,14 +72,20 @@ See [docs/CLOUD.md](docs/CLOUD.md). Short version:
 - Canonical files live under **`var/`** (writable). They are **not** written to read-only `pub/` root.
 - Magento routes serve `/llms.txt`; `var/` is not a public web root.
 - Fastly: cache the routes; purge uses Magento cache tags `midcore_llmstxt` / `midcore_llmstxt_{storeId}`.
-- Run generate on deploy or via Magento/Cloud cron.
+- Run generate on deploy, then rely on Magento cron group `midcore`. A Cloud crontab that calls `midcore:llms:generate` is an optional override — do not run both.
 
 ## Analytics (v1)
 
 There is **no sync database write on the serve path**.
 
 - **Preferred:** Fastly / edge logs for real crawler hits on `/llms.txt` and `/llms-full.txt`.
-- **Optional / partial:** origin 404 miss counter in admin. CDN cache hits never increment it.
+- **Optional / partial:** origin 404 miss counter in admin. CDN cache hits never increment it. Stored under cache tag `midcore_llmstxt_analytics` so regenerate / Fastly purge of `/llms.txt` does not reset it.
+
+## SEO notes
+
+- Do **not** `Disallow` `/llms.txt` or `/llms-full.txt` in robots.txt. If you use a broad `Disallow: /` (or similar), add explicit `Allow: /llms.txt` and `Allow: /llms-full.txt`.
+- Curate CMS pages for the index with the admin CMS page multiselect. Do not dump every thin landing page.
+- Generated links should be absolute `https://` URLs from the store base URL. Confirm on a live store (admin base URL can be `http://` or a placeholder host; that is not cheap to enforce in code).
 
 ## Multi-store and B2B
 
