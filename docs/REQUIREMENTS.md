@@ -1,5 +1,7 @@
 # Magento 2 module: llms.txt (planning / requirements)
 
+For v2 scope see docs/REQUIREMENTS-v2.md (draft).
+
 Status: v1 implemented in this repository (go decision taken).
 Note: §6.4 serving locked (Rohan). §8 product decisions locked (Jigar Sir).
 Owner: Karan · Team Manager (MidCore Magento Team)
